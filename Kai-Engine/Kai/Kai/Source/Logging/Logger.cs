@@ -34,7 +34,7 @@ namespace Kai.Source.Logging
                     break;
             }
 
-            Console.WriteLine($"{time} {type}: " + message);
+            Console.WriteLine($"{time} " + "<Kai Engine>" + $" {type}: " + message);
             return message;
         }
     }

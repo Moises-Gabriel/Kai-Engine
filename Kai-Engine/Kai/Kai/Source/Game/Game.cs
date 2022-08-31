@@ -11,9 +11,14 @@ namespace Kai.Source.Game
             window.Init("Kai Engine", 640, 480);
         }
 
-        public void End()
+        public void Update()
         {
-            window.Clean();
+            if (window.IsRunning)
+                window.Update();
         }
+
+        //public void End()
+        //{
+        //}
     }
 }

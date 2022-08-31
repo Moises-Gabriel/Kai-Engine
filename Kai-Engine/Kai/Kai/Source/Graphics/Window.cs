@@ -8,10 +8,10 @@ namespace Kai.Source.Graphics
     {
         private readonly Logger logger = new();
 
-        private IntPtr window;
-        private IntPtr renderer;
+        private IntPtr _window;
+        private IntPtr _renderer;
 
-        public bool isRunning = false;
+        public bool IsRunning = true;
 
         //Initialize
         public void Init(string title, int width, int height)
@@ -33,39 +33,61 @@ namespace Kai.Source.Graphics
         void Create(string title, int width, int height)
         {
             //assign window and renderer
-            window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
-
-            renderer = SDL_CreateRenderer(window, -1, 0);
-
-            SDL_SetRenderDrawColor(renderer, 255, 0, 100, 225);
-            SDL_RenderClear(renderer);
-
-            SDL_RenderPresent(renderer);
-
-            if (window != IntPtr.Zero)
+            _window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WindowFlags.SDL_WINDOW_RESIZABLE);
+            _renderer = SDL_CreateRenderer(_window, -1, 0);
+            
+            //Check if initialized properly and get renderer
+            if (_window != IntPtr.Zero)
             {
                 logger.Log(LogType.Info, "Window created!");
 
-                renderer = SDL_GetRenderer(window);
-                if (renderer != IntPtr.Zero)
+                _renderer = SDL_GetRenderer(_window);
+                if (_renderer != IntPtr.Zero)
                     logger.Log(LogType.Info, "Renderer created!");
                 else
                     logger.Log(LogType.Error, "Renderer could not be created!");
-
-                SDL_Delay(5000);
-                Clean();
             }
             else
                 logger.Log(LogType.Error, "Window could not be created!");
 
-            isRunning = true;
+            SDL_RenderPresent(_renderer);
+        }
+
+        void Render()
+        {
+            //Render to screen
+            SDL_SetRenderDrawColor(_renderer, 255, 0, 100, 225);
+            SDL_RenderClear(_renderer);
+
+            SDL_RenderPresent(_renderer);
+        }
+
+        public void Update()
+        {
+            while (IsRunning)
+            {
+                SDL_Event windowEvent = new();
+                while (SDL_PollEvent(out windowEvent) != 0)
+                {
+                    switch (windowEvent.type)
+                    {
+                        case SDL_EventType.SDL_QUIT:
+                            IsRunning = false;
+                            Clean();
+                            break;
+                        case SDL_EventType.SDL_WINDOWEVENT:
+                            Render();
+                            break;
+                    }
+                }
+            }
         }
 
         public void Clean()
         {
-            SDL_DestroyWindow(window);
+            SDL_DestroyWindow(_window);
             logger.Log(LogType.Warning, "Window destroyed!");
-            SDL_DestroyRenderer(renderer);
+            SDL_DestroyRenderer(_renderer);
             logger.Log(LogType.Warning, "Renderer destroyed!");
             SDL_Quit();
             logger.Log(LogType.Warning, "Quit SDL!");
