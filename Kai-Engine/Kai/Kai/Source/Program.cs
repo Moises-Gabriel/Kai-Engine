@@ -9,9 +9,11 @@ namespace Kai.Source
         static void Main(string[] args)
         {
             Game.Game game = new();
-
-            game.Start();
-            game.Update();
+            
+            //initialize the game loop
+            game.Init();
+            //run the game loop
+            game.Run();
         }
     }
 }

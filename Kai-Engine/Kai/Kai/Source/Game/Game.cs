@@ -6,19 +6,15 @@ namespace Kai.Source.Game
     {
         private Window window = new();
 
-        public void Start()
+        public void Init()
         {
-            window.Init("Kai Engine", 640, 480);
+            window.Create("Kai Engine", 640, 480);
         }
 
-        public void Update()
+        public void Run()
         {
             if (window.IsRunning)
                 window.Update();
         }
-
-        //public void End()
-        //{
-        //}
     }
 }
